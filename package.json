@@ -1,0 +1,36 @@
+{
+  "name": "@eastjs/core",
+  "version": "0.1.1",
+  "description": "A Node.js Server-Side Framework",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rf ./dist",
+    "prebuild": "npm run clean",
+    "build": "tsc",
+    "prestart": "npm run build",
+    "start": "node ./dist/index.js",
+    "prepublish": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akadirdev/blacksea.git"
+  },
+  "keywords": [],
+  "author": "akadirdev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/akadirdev/blacksea/issues"
+  },
+  "homepage": "https://github.com/akadirdev/blacksea#readme",
+  "dependencies": {
+    "express": "^4.18.1",
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^18.7.17",
+    "typescript": "^4.8.3"
+  }
+}
