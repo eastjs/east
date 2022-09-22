@@ -1,8 +1,8 @@
 export enum BindingScope {
-  APPLICATION,
-  REQUEST,
-  TRANSIENT,
-  SINGLETON,
+  APPLICATION = "APPLICATION",
+  REQUEST = "REQUEST",
+  TRANSIENT = "TRANSIENT",
+  SINGLETON = "SINGLETON",
 }
 
 export class Context {}

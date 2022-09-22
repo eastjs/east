@@ -12,6 +12,6 @@ export interface ClassDefinition {
 }
 
 export enum ClassType {
-  CONTROLLER,
-  SERVICE,
+  CONTROLLER = "CONTROLLER",
+  SERVICE = "SERVICE",
 }

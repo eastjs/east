@@ -1,5 +1,3 @@
-import { Context } from "../context";
-import { Class } from "../definitions/class.definition";
 import { EndpointDefinition } from "../definitions/endpoint.definition";
 
 export const get = (path: string) => {
@@ -8,23 +6,14 @@ export const get = (path: string) => {
     key: string | symbol,
     descriptor: PropertyDescriptor
   ) => {
-    console.log("key", key);
-
-    const getDefs = Reflect.getMetadata("meta:get", Context) ?? [];
+    const getDefs = Reflect.getMetadata("meta:get", target) ?? [];
     getDefs.push({
       classCtor: target.constructor,
       path: path,
       methodName: key,
     } as EndpointDefinition);
 
-    const endpointDef = {
-      classCtor: target.constructor,
-      methodName: key,
-      path: path,
-    } as EndpointDefinition;
-
-    Reflect.defineMetadata("meta:get", endpointDef, target);
-    Reflect.defineMetadata("meta:get", getDefs, Context);
+    Reflect.defineMetadata("meta:get", getDefs, target);
     return descriptor;
   };
 };

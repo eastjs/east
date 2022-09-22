@@ -1,7 +1,7 @@
-import { controller } from "../core/decorators/controller.decorator";
-import { get } from "../core/decorators/get.decorator";
+import { RestController } from "../../../core/decorators/rest-controller.decorator";
+import { get } from "../../../core/decorators/get.decorator";
 
-@controller()
+@RestController()
 export class HelloController {
   @get("/hello")
   async getHello(id: number): Promise<string> {

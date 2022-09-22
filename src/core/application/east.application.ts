@@ -1,10 +1,11 @@
+import { EastModule } from "../module/east.module";
 import "reflect-metadata";
 import express, { Express } from "express";
 import http from "http";
-import { Context } from "./context";
-import { Entity } from "./definitions/class.definition";
-import { banner, Logger } from "./logging";
-import { EndpointDefinition } from "./definitions/endpoint.definition";
+import { Context } from "../context";
+import { banner, Logger } from "../logging";
+import { Class } from "../definitions/class.definition";
+import { EndpointDefinition } from "../definitions/endpoint.definition";
 
 export interface ApplicationConfig {
   host?: string;
@@ -13,7 +14,7 @@ export interface ApplicationConfig {
   url?: string;
 }
 
-export class Application {
+export class EastApplication extends EastModule {
   protected app: Express;
   protected httpServer: http.Server;
   public configs: ApplicationConfig;
@@ -22,15 +23,43 @@ export class Application {
 
   public logger: Logger;
 
+  protected module(ctor: Class<EastModule>): void {
+    const module = new ctor();
+    module.registerControllers(this.app);
+  }
+
+  protected controller<T>(ctor: Class<T>): void {
+    const endpointDefs = Reflect.getMetadata(
+      "meta:get",
+      new ctor()
+    ) as Array<EndpointDefinition>;
+
+    console.log("endpointDef", endpointDefs);
+
+    for (const endpointDef of endpointDefs) {
+      this.app.get(endpointDef.path, async (req, res): Promise<void> => {
+        console.log("handler", req.originalUrl);
+        console.log("params", req.params);
+        console.log("query", req.query);
+        console.log("body", req.body);
+        // console.log("headers", req.headers);
+        const controller = new endpointDef.classCtor();
+        const result = await controller[endpointDef.methodName](
+          Number(req.query.id)
+        );
+        res.send(result);
+      });
+    }
+  }
+
   constructor(config?: ApplicationConfig) {
+    super();
     this.logger = new Logger("Application");
     console.log(banner);
     this.context = new Context();
     this.initConfig(config);
     this.initServer();
   }
-
-  protected controller<T>(modelCtor: Entity<T>): void {}
 
   private initConfig(config?: ApplicationConfig): void {
     this.logger.debug(`Initialize configurations`);
@@ -52,27 +81,7 @@ export class Application {
     this.httpServer = http.createServer(this.app);
   }
 
-  private initRouter(): void {
-    const endpointDefs = Reflect.getMetadata(
-      "meta:get",
-      Context
-    ) as Array<EndpointDefinition>;
-    console.log("endpointDef", endpointDefs);
-    for (const endpointDef of endpointDefs) {
-      this.app.get(endpointDef.path, async (req, res): Promise<void> => {
-        console.log("handler", req.originalUrl);
-        console.log("params", req.params);
-        console.log("query", req.query);
-        console.log("body", req.body);
-        // console.log("headers", req.headers);
-        const controller = new endpointDef.classCtor();
-        const result = await controller[endpointDef.methodName](
-          Number(req.query.id)
-        );
-        res.send(result);
-      });
-    }
-  }
+  private initRouter(): void {}
 
   public async start(): Promise<void> {
     this.logger.debug(`Server starting..`);

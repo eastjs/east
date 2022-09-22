@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { BindingScope } from "../context";
 import { ClassDefinition, ClassType } from "../definitions/class.definition";
 
-export const controller = () => {
+export const RestController = () => {
   return (target: Function) => {
     const classDef = {
       bindingScope: BindingScope.REQUEST,
